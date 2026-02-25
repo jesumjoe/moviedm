@@ -1030,12 +1030,12 @@ print("Hello, Faculty!")
 print(f"Current Dataset Shape: {df.shape}")
 
 # Example 3: Draw a custom plot
-# fig = px.scatter(df.head(100), x='budget', y='revenue', title="Custom Plot")
-# st.plotly_chart(fig)
+fig = px.scatter(df.head(100), x='budget', y='revenue', title="Custom Plot")
+st.plotly_chart(fig)
 '''
         st.markdown("Write Python below. You have access to all imported libraries "
                     "(`pd`, `px`, `st`, etc.) and the dataset variable `df`.")
-        user_code = st.text_area("Enter Python Code:", value=default_code, height=250)
+        user_code = st.text_area("Enter Python Code:", value=default_code, height=300)
 
         if st.button("▶️ Run Code", type="primary"):
             st.markdown("### Execution Result")
@@ -1059,12 +1059,16 @@ print(f"Current Dataset Shape: {df.shape}")
 
                 sys.stdout = old_stdout
                 output_str = redirected_output.getvalue()
-                if output_str.strip():
-                    st.code(output_str, language="text")
-                if result is not None:
-                    st.write(result)
-                elif not output_str.strip():
-                    st.success("Code executed successfully with no output.")
+                
+                if not tree.body:
+                    st.warning("⚠️ No executable code found. Did you forget to uncomment the code block?")
+                else:
+                    if output_str.strip():
+                        st.code(output_str, language="text")
+                    if result is not None and type(result).__name__ != 'DeltaGenerator':
+                        st.write(result)
+                    elif not output_str.strip():
+                        st.success("Code executed successfully with no textual output.")
             except Exception as e:
                 sys.stdout = old_stdout
                 st.error(f"Error executing code:\n{str(e)}")
